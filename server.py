@@ -1,3 +1,6 @@
+
+#simple http handler that turns on and off an led connected to the gpio
+
 import http.server
 import socketserver
 
