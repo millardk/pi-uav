@@ -11,7 +11,7 @@ stdscr.keypad(True)
 
 
 while(True):
-    pi.set_servo_pulse(19,1500)
+    pi.set_servo_pulsewidth(19,1500)
 
 #
 # while True:
