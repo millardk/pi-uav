@@ -1,3 +1,3 @@
-# CS370_termproject
+# CS370-project
 
 
