@@ -1,4 +1,3 @@
-import pigpio;
 import curses
 from curses import wrapper
 from time import sleep
@@ -13,7 +12,7 @@ def main(stdscr):
     MIN = 1000
     MAX = 2000
     pulsewidth = 1500
-    amt = 100
+    amt = 10
 
     while True:
         c = stdscr.getch()
