@@ -16,13 +16,14 @@ class FlightController:
         self.ap_mode = 0
 
 
-    def update_inputs(self, xbee_message):
+    def update_inputs(self, xbee_message):        
         for x in range(4):
-            self.inputs[x] = xbee_message[x] / 255
-            flaps = (xbee_message.data[4] >> 6 & 3) / 3;
+            self.inputs[x] = int(xbee_message.data[x]) / 255
+            flaps = int((xbee_message.data[4] >> 6 & 3)) / 3;
         self.inputs[4] = flaps
         self.inputs[5] = flaps
         self.ap_mode = xbee_message.data[4] >> 5 & 1;
+        
 
     def map_val(self, channel, setting):
         magnitude = (self.servo_maximums[channel] - self.servo_minimums[channel]) * setting
@@ -31,7 +32,7 @@ class FlightController:
             output = self.servo_maximums[channel] - magnitude
         else:
             output = self.servo_minimums[channel] + magnitude
-        return output
+        return int(output)
 
     def do_control(self):
         for x in range(6):

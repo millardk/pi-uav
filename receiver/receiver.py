@@ -2,7 +2,7 @@ from digi.xbee.devices import XBeeDevice
 import pigpio
 import threading
 import time
-import flightcontroller
+from flightcontroller import FlightController
 
 last_received = 0
 last_checked = 0
@@ -13,8 +13,10 @@ def main():
     try:    
         device = XBeeDevice("/dev/ttyAMA0", 9600)
         device.open()
-
+        
         fc = FlightController()
+        print("Hi")
+
 
         def data_receive_callback(xbee_message):
             global last_received
