@@ -1,14 +1,13 @@
 from digi.xbee.devices import XBeeDevice
 import Adafruit_PCA9685
 import pigpio
-import _thread
+import threading
 from time import sleep
 
 # TODO: Replace with the serial port where your local module is connected to. 
 
 servo_min = 205
 servo_max = 410
-led_status = True
 
 
 def map_value(val):
@@ -69,5 +68,6 @@ def blink():
         sleep(0.85)
 
 if __name__ == '__main__':
-    _thread.start_new_thread(blink)
+    t = threading.Thread(target=blink)
+    t.start()
     main()
