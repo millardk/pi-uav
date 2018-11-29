@@ -2,13 +2,13 @@ from digi.xbee.devices import XBeeDevice
 import Adafruit_PCA9685
 import pigpio
 import threading
-from time import sleep
-
+import time
 # TODO: Replace with the serial port where your local module is connected to. 
 
 servo_min = 205
 servo_max = 410
 
+last_received = 0
 
 def map_value(val):
     range = servo_max - servo_min
@@ -33,15 +33,14 @@ def main():
             set_servo(channel, last[channel])
         
         def data_receive_callback(xbee_message):
-##            print("From %s >> %s" % (xbee_message.remote_device.get_64bit_addr(),
-##                                     xbee_message.data))
+            last_received = xbee_message.timestamp
             for channel in range(4):
                 if last[channel] != xbee_message.data[channel]:
                     set_servo(channel, xbee_message.data[channel])
                     last[channel] = xbee_message.data[channel]
 
-        device.add_data_received_callback(data_receive_callback)
 
+        device.add_data_received_callback(data_receive_callback)
         print("Waiting for data...\n")
         input()
 
@@ -50,24 +49,27 @@ def main():
             device.close()
 
 
-def blink():
+def red_blink():
     pi = pigpio.pi()
     pi.set_mode(13, pigpio.OUTPUT)
     pi.set_mode(16, pigpio.OUTPUT)
 
+    def check_connection():
+        global last_received
+        cur_time =  int(round(time.time() * 1000))
+        return  cur_time - last_received > 500
 
     while(True):
-        # Airbus A320 wing strobe light pattern
-        pi.write(13, 1)
-        sleep(0.05)
+        if check_connection():
+            pi.write(16, 1)
+        else:
+            pi.write(13, 1)
+        time.sleep(0.5)
         pi.write(13, 0)
-        sleep(0.05)
-        pi.write(13, 1)
-        sleep(0.1)
-        pi.write(13,0)
-        sleep(0.85)
+        pi.write(16, 0)
+        time.sleep(1.5)
 
 if __name__ == '__main__':
-    t = threading.Thread(target=blink)
+    t = threading.Thread(target=red_blink)
     t.start()
     main()
