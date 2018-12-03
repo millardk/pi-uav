@@ -9,8 +9,8 @@ speed = 0
 degrees = 0
 randomStat = 0
 controllerIP = socket.gethostbyname(socket.gethostname())
-#leftStickPosition = []
-#rightStickPosition = []
+leftStickPosition = [0,0]
+rightStickPosition = [0,0]
 droneIP = "129.82.44.148"
 guiInMotion = True
 class Screen:
@@ -62,8 +62,8 @@ class Screen:
         self.canvas0 = tkinter.Canvas(frameLeftStick, height=300, width=300)
         self.canvas0.pack()
         
-        self.canvas0.create_oval(15, 15, 285, 285, fill="black")
-        self.canvas0.create_oval(75, 75, 225, 225, fill="grey")
+        self.canvas0.create_oval(45, 45, 260, 260, fill="black")
+        self.leftStick = self.canvas0.create_oval(75, 75, 225, 225, fill="grey")
         self.canvas0.create_text(150, 295,text="Left Stick")
         
         self.canvas2 = tkinter.Canvas(frameAttitudeInd, height=300, width=300)
@@ -75,8 +75,8 @@ class Screen:
         self.canvas1 = tkinter.Canvas(frameRightStick, height=300, width=300)
         self.canvas1.pack()
         
-        self.canvas1.create_oval(15, 15, 285, 285, fill="black")
-        self.canvas1.create_oval(75, 75, 225, 225, fill="grey")
+        self.canvas1.create_oval(45, 45, 260, 260, fill="black")
+        self.rightStick = self.canvas1.create_oval(75, 75, 225, 225, fill="grey")
         self.canvas1.create_text(150, 295,text="Right Stick")
         
         self.updateScreen()
@@ -101,11 +101,15 @@ class Screen:
         self.speedScale.set(speed)
         self.degreesScale.set(degrees)
         self.randomScale.set(randomStat)
-        self.flightTime += 1
-        if self.getData:
-            print("%5d\t%5d\t%8d\t%6d"%(self.flightTime, speed, altitude, degrees))
+        
+        self.canvas0.coords(self.leftStick, 75 + (leftStickPosition[0]*60), 75 + (-leftStickPosition[1]*60), 225 + (leftStickPosition[0]*60), 225 + (-leftStickPosition[1]*60))
+        self.canvas1.coords(self.rightStick, 75 + (rightStickPosition[0]*60), 75 + (-rightStickPosition[1]*60), 225 + (rightStickPosition[0]*60), 225 + (-rightStickPosition[1]*60))
+        
+        self.flightTime += 0.5
+        if self.getData and (self.flightTime).is_integer():
+            print("%3.2f\t%5d\t%8d\t%6d"%(self.flightTime, speed, altitude, degrees))
             #str(self.flightTime) + "\t" + str(self.speed) + "\t" + str(self.altitude) + "\t\t" + str(self.degrees)
-        self.masterGui.after(1000, self.updateScreen)
+        self.masterGui.after(500, self.updateScreen)
 
 
 def runGui():
@@ -117,14 +121,18 @@ def runGui():
     guiInMotion = False
 
 def changeValues():
-    global altitude, speed, degrees, randomStat
+    global altitude, speed, degrees, randomStat, leftStickPosition, rightStickPosition
     time.sleep(5)
     while guiInMotion:
         altitude = random.randint(0, 1000)
         speed = random.randint(0, 100)
         degrees = random.randint(0, 360)
         randomStat = random.randint(0, 100)
-        time.sleep(1)
+        leftStickPosition[0] = random.uniform(-1,1)
+        leftStickPosition[1] = random.uniform(-1,1)
+        rightStickPosition[0] = random.uniform(-1,1)
+        rightStickPosition[1] = random.uniform(-1,1)
+        time.sleep(0.5)
     
 def main():
     guiThread = threading.Thread(target=runGui)
