@@ -12,7 +12,7 @@ controllerIP = socket.gethostbyname(socket.gethostname())
 leftStickPosition = [0,0]
 rightStickPosition = [0,0]
 droneIP = "129.82.44.148"
-guiInMotion = True
+guiInMotion = False
 class Screen:
     def __init__(self, master):
         self.masterGui = master
@@ -26,8 +26,8 @@ class Screen:
         frameStats = tkinter.Frame(master)
         frameStats.pack(side="bottom")
         
-        frameAttitudeInd = tkinter.Frame(master)
-        frameAttitudeInd.pack(side="left")
+        #frameAttitudeInd = tkinter.Frame(master)
+        #frameAttitudeInd.pack(side="left")
         
         self.flightTime = 0
         self.getData = False
@@ -66,11 +66,11 @@ class Screen:
         self.leftStick = self.canvas0.create_oval(75, 75, 225, 225, fill="grey")
         self.canvas0.create_text(150, 295,text="Left Stick")
         
-        self.canvas2 = tkinter.Canvas(frameAttitudeInd, height=300, width=300)
-        self.canvas2.pack()
-        self.canvas2.create_arc(15, 15, 285, 285, start=0, extent=180, fill="blue")
-        self.canvas2.create_arc(15, 15, 285, 285, start=180, extent=180, fill="brown")
-        self.canvas2.create_line(15, 150, 285, 150, width=3, fill="white")
+        #self.canvas2 = tkinter.Canvas(frameAttitudeInd, height=300, width=300)
+        #self.canvas2.pack()
+        #self.canvas2.create_arc(15, 15, 285, 285, start=0, extent=180, fill="blue")
+        #self.canvas2.create_arc(15, 15, 285, 285, start=180, extent=180, fill="brown")
+        #self.canvas2.create_line(15, 150, 285, 150, width=3, fill="white")
 
         self.canvas1 = tkinter.Canvas(frameRightStick, height=300, width=300)
         self.canvas1.pack()
@@ -108,12 +108,12 @@ class Screen:
         self.flightTime += 0.5
         if self.getData and (self.flightTime).is_integer():
             print("%3.2f\t%5d\t%8d\t%6d"%(self.flightTime, speed, altitude, degrees))
-            #str(self.flightTime) + "\t" + str(self.speed) + "\t" + str(self.altitude) + "\t\t" + str(self.degrees)
         self.masterGui.after(500, self.updateScreen)
 
 
 def runGui():
     global guiInMotion
+    guiInMotion = True
     gui = tkinter.Tk()
     gui.title("Drone Display")
     guiScreen = Screen(gui)
